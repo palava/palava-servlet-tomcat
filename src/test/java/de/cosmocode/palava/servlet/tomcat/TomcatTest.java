@@ -16,8 +16,6 @@
 
 package de.cosmocode.palava.servlet.tomcat;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 
 import de.cosmocode.palava.core.Framework;
@@ -36,10 +34,9 @@ public final class TomcatTest {
     @Test
     public void start() {
         final Framework framework = FrameworkLoader.load();
-        framework.start();
-        
-        try {
-            Thread.sleep(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+        try {   
+            framework.start();
+            Thread.sleep(30 * 1000);
         } catch (InterruptedException e) {
             throw new AssertionError(e);
         } finally {

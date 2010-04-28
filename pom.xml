@@ -19,7 +19,7 @@
         <artifactId>maven-license-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>catalina/**</exclude>
+            <exclude>src/test/resources/catalina/**</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -44,16 +44,40 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>catalina</artifactId>
       <version>6.0.26</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId> 
+          <artifactId>juli</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>coyote</artifactId>
       <version>6.0.26</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId> 
+          <artifactId>juli</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>jasper</artifactId>
       <version>6.0.26</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId> 
+          <artifactId>juli</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- TODO should be in public repo -->
+    <dependency>
+      <groupId>tomcat-slf4j</groupId>
+      <artifactId>tomcat-slf4j</artifactId>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -61,9 +85,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>de.cosmocode</groupId>
-      <artifactId>log4j-config</artifactId>
-      <version>[1.2,2)</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.9-RC0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

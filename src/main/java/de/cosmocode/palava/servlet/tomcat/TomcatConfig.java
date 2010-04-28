@@ -29,6 +29,8 @@ public final class TomcatConfig {
     
     public static final String CATALINA_HOME = PREFIX + "catalinaHome";
     
+    public static final String APP_BASE = PREFIX + "appBase";
+    
     public static final String ADDRESS = PREFIX + "address";
     
     public static final String PORT = PREFIX + "port";

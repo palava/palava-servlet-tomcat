@@ -16,8 +16,11 @@
 
 package de.cosmocode.palava.servlet.tomcat;
 
+import org.apache.catalina.startup.Embedded;
+
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 
 import de.cosmocode.palava.servlet.Webapp;
@@ -33,6 +36,7 @@ public final class TomcatModule implements Module {
     public void configure(Binder binder) {
         Multibinder.newSetBinder(binder, Webapp.class);
         binder.bind(Tomcat.class).asEagerSingleton();
+        binder.bind(Embedded.class).toProvider(Tomcat.class).in(Singleton.class);
     }
 
 }

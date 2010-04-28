@@ -18,6 +18,7 @@ package de.cosmocode.palava.servlet.tomcat;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Set;
 
 import org.apache.catalina.Context;
@@ -25,7 +26,6 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.startup.Embedded;
 import org.slf4j.Logger;
@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.internal.Sets;
 import com.google.inject.name.Named;
 
@@ -46,27 +47,46 @@ import de.cosmocode.palava.servlet.Webapp;
  *
  * @author Willi Schoenborn
  */
-final class Tomcat implements Initializable, AutoStartable {
+final class Tomcat implements Initializable, AutoStartable, Provider<Embedded> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Tomcat.class);
 
     private final Embedded tomcat = new Embedded();
     
+    private final File catalinaHome;
+    
+    private Realm realm = new MemoryRealm();
+
+    private File appBase;
+    
     private Set<Webapp> webapps = Sets.newLinkedHashSet();
     
-    private final File catalinaHome;
-
     private InetAddress address;
     
     private int port = 8080;
     
     private boolean secure;
     
-    private Realm realm = new MemoryRealm();
-    
     @Inject
     public Tomcat(@Named(TomcatConfig.CATALINA_HOME) File catalinaHome) {
         this.catalinaHome = Preconditions.checkNotNull(catalinaHome, "CatalinaHome");
+        this.appBase = new File(catalinaHome, "webapps");
+        
+        try {
+            this.address = InetAddress.getByName("localhost");
+        } catch (UnknownHostException e) {
+            throw new AssertionError(e);
+        }
+    }
+    
+    @Inject(optional = true)
+    void setRealm(@Named(TomcatConfig.REALM) Realm realm) {
+        this.realm = realm;
+    }
+    
+    @Inject(optional = true)
+    void setAppBase(@Named(TomcatConfig.APP_BASE) File appBase) {
+        this.appBase = Preconditions.checkNotNull(appBase, "AppBase");
     }
     
     @Inject(optional = true)
@@ -89,11 +109,6 @@ final class Tomcat implements Initializable, AutoStartable {
         this.secure = secure;
     }
     
-    @Inject(optional = true)
-    void setRealm(@Named(TomcatConfig.REALM) Realm realm) {
-        this.realm = realm;
-    }
-    
     @Override
     public void initialize() throws LifecycleException {
         LOG.info("Catalina home set to {}", catalinaHome);
@@ -104,17 +119,13 @@ final class Tomcat implements Initializable, AutoStartable {
         
         final Engine engine = tomcat.createEngine();
         
-        final File appBase = new File(catalinaHome, "webapps");
         LOG.info("Creating host with appBase {}", appBase);
         final Host localhost = tomcat.createHost("localhost", appBase.getAbsolutePath());
         
         engine.addChild(localhost);
         engine.setDefaultHost(localhost.getName());
 
-        final WebappLoader loader = new WebappLoader(Thread.currentThread().getContextClassLoader());
-        
         final Context root = tomcat.createContext("", new File(appBase, "ROOT").getAbsolutePath());
-        root.setLoader(loader);
         localhost.addChild(root);
         
         for (Webapp webapp : webapps) {
@@ -134,6 +145,11 @@ final class Tomcat implements Initializable, AutoStartable {
     }
     
     @Override
+    public Embedded get() {
+        return tomcat;
+    }
+    
+    @Override
     public void start() throws LifecycleException {
         try {
             LOG.info("Starting tomcat {}", tomcat);
@@ -146,6 +162,7 @@ final class Tomcat implements Initializable, AutoStartable {
     @Override
     public void stop() throws LifecycleException {
         try {
+            LOG.info("Stopping tomcat {}", tomcat);
             tomcat.stop();
         } catch (org.apache.catalina.LifecycleException e) {
             throw new LifecycleException(e);
