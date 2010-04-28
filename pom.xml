@@ -12,6 +12,19 @@
   <scm>
   	<developerConnection>https://palava.svn.cosmocode.de/palava-servlet-tomcat/trunk</developerConnection>
   </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>catalina/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>de.cosmocode.palava</groupId>
