@@ -97,5 +97,12 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>de.cosmocode.palava</groupId>
+      <artifactId>palava-servlet</artifactId>
+      <version>[1.0-SNAPSHOT,2)</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

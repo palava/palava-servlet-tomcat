@@ -26,6 +26,8 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.startup.Embedded;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.internal.Sets;
 import com.google.inject.name.Named;
+import com.google.inject.servlet.GuiceFilter;
 
 import de.cosmocode.palava.core.lifecycle.AutoStartable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
@@ -131,6 +134,17 @@ final class Tomcat implements Initializable, AutoStartable, Provider<Embedded> {
         for (Webapp webapp : webapps) {
             LOG.info("Configuring webapp {}", webapp);
             final Context context = tomcat.createContext(webapp.getContext(), webapp.getLocation());
+            
+            final FilterDef filterDef = new FilterDef();
+            filterDef.setFilterClass(GuiceFilter.class.getName());
+            filterDef.setFilterName(GuiceFilter.class.getSimpleName());
+            context.addFilterDef(filterDef);
+            
+            final FilterMap filterMap = new FilterMap();
+            filterMap.setFilterName(GuiceFilter.class.getSimpleName());
+            filterMap.addURLPattern("/*");
+            context.addFilterMap(filterMap);
+            
             localhost.addChild(context);
         }
 

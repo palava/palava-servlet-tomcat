@@ -19,6 +19,7 @@ package de.cosmocode.palava.servlet.tomcat;
 import de.cosmocode.palava.core.DefaultRegistryModule;
 import de.cosmocode.palava.core.inject.TypeConverterModule;
 import de.cosmocode.palava.core.lifecycle.LifecycleModule;
+import de.cosmocode.palava.servlet.EchoServlet;
 import de.cosmocode.palava.servlet.WebappModule;
 
 /**
@@ -37,6 +38,8 @@ public final class ApplicationTestModule extends WebappModule {
         
         addWebapp("examples", "/sample");
         addWebapp("manager", "/manager");
+        
+        serve("/echo").with(EchoServlet.class);
     }
 
 }
