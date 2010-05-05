@@ -148,8 +148,6 @@ final class Tomcat implements Initializable, AutoStartable, Provider<Embedded> {
             localhost.addChild(context);
         }
 
-        // TODO add manager app
-        
         tomcat.addEngine(engine);
         
         LOG.info("Creating connector on {}:{}", address, port);
