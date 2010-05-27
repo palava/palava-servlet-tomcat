@@ -10,7 +10,7 @@
   <name>Palava Servlet Tomcat</name>
   <version>1.0-SNAPSHOT</version>
   <scm>
-  	<developerConnection>https://palava.svn.cosmocode.de/palava-servlet-tomcat/trunk</developerConnection>
+  	<developerConnection>scm:svn:https://palava.svn.cosmocode.de/palava-servlet-tomcat/trunk</developerConnection>
   </scm>
   <build>
     <plugins>
